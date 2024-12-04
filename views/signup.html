@@ -18,19 +18,27 @@
         </form>
     </div>
     <p>Existing User? - <a>Log In</a></p>
+    <p id="error" style="color:red"></p>
     
     <script>
         document.getElementById('signup-form').addEventListener("submit",async (event)=>{
             event.preventDefault();
+            document.getElementById("error").innerHTML= '';
             const formData = {
                 userName:event.target.username.value,
                 email:event.target.email.value,
                 passWord:event.target.password.value,
                 phoneNumber:event.target.phonenumber.value,
             }
+            try{
+            const postResponse = await axios.post('http://localhost:3000/user/signup',formData);
             resetForm(event);
-            await axios.post('http://localhost:3000/user/signup',formData);
-            
+            }catch(err){
+                resetForm(event);
+                if (err.response.status!= 200){
+                    document.getElementById("error").innerHTML= JSON.stringify(err.response.data.message);  
+                } 
+            }            
         })
         function resetForm(event){
             event.target.username.value='';
