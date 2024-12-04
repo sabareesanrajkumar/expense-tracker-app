@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id = "signup">
+        <h3>Sign Up</h3>
+        <form id="signup-form">
+            <input type="text" name="username" placeholder="User Name" id="username" required>
+            <input type="email" name="email" placeholder="Email ID" id="email" required>
+            <input type="number" name="phonenumber" placeholder="Phone Number" id="phonenumber" required>
+            <button type="submit">Sign Up</button>
+        </form>
+    </div>
+    <p>Existing User? - <a>Log In</a></p>
+    
+    <script>
+        document.getElementById('signup-form').addEventListener("submit",async (event)=>{
+            event.preventDefault();
+            const formData = {
+                userName:event.target.username.value,
+                email:event.target.email.value,
+                phoneNumber:event.target.phonenumber.value,
+            }
+            resetForm(event);
+            await axios.post('http://localhost:3000/user/signup',formData);
+            
+        })
+        function resetForm(event){
+            event.target.username.value='';
+            event.target.email.value='';
+            event.target.phonenumber.value='';
+        }
+    </script>
+</body>
+</html>
