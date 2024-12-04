@@ -12,6 +12,7 @@
         <form id="signup-form">
             <input type="text" name="username" placeholder="User Name" id="username" required>
             <input type="email" name="email" placeholder="Email ID" id="email" required>
+            <input type="password" name="password" placeholder="password" id="password" required>
             <input type="number" name="phonenumber" placeholder="Phone Number" id="phonenumber" required>
             <button type="submit">Sign Up</button>
         </form>
@@ -24,6 +25,7 @@
             const formData = {
                 userName:event.target.username.value,
                 email:event.target.email.value,
+                passWord:event.target.password.value,
                 phoneNumber:event.target.phonenumber.value,
             }
             resetForm(event);
@@ -33,6 +35,7 @@
         function resetForm(event){
             event.target.username.value='';
             event.target.email.value='';
+            event.target.password.value='';
             event.target.phonenumber.value='';
         }
     </script>
