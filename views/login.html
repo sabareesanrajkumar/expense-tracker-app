@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <form id="login-form">
+        <input type="email" name="email" id="email" placeholder="email" required>
+        <input type="password" namw="passWord" id="password" placeholder="password" required>
+        <button type="submit">Log In</button>
+    </form>
+    <p>Not a User? - <a>Sign Up Now</a></p>
+    <p id="error" style="color:red"></p>
+
+
+    <script>
+        document.getElementById('login-form').addEventListener("submit", async (event)=>{
+            event.preventDefault();
+            document.getElementById("error").innerHTML='';
+            const FormData={
+                email: event.target.email.value,
+                passWord: event.target.password.value
+            }
+            try{
+                const postResponse= await axios.post('http://localhost:3000/user/login',FormData);
+                if (postResponse.status==200){
+                    console.log("login successful")
+                    alert("login successful");
+                }
+                resetForm(event);
+            }catch(err){
+                resetForm(event);
+                if (err.response.status!= 200){
+                    document.getElementById("error").innerHTML= JSON.stringify(err.response.data.message);  
+                }
+            }
+
+        })
+        function resetForm(event){
+            event.target.email.value='';
+            event.target.password.value='';
+        }
+
+    </script>
+    
+</body>
+</html>
