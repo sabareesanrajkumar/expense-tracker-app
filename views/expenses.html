@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>expenses</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h3>Daily Expenses</h3>
+    <form id="expense-form">
+        <input type="number" name="expense" id="expense" placeholder="Enter Expense" required>
+        <input type="text" name="dscription" id="description" placeholder="Enter Description">
+        <select id="type" name="type" required>
+            <option value="" disabled selected hidden>Select an type</option>
+            <option value="food">Food</option>
+            <option value="transports">Transports</option>
+            <option value="Utilities">Utilities</option>
+            <option value="Entertainment">Entertainment</option>
+          </select>
+        <button type="submit">Add Expense</button>
+    </form>
+    <h3>Expenses</h3>
+    <div id="expenses"></div>
+    
+    <p id="error" style="color:red"></p>
+    <script>
+        document.getElementById('expense-form').addEventListener('submit',async (event)=>{
+            event.preventDefault();
+            const formData = {
+                expense: event.target.expense.value,
+                description: event.target.description.value,
+                type: event.target.type.value
+            }
+
+            await axios.post('http://localhost:3000/expenses/addexpense',formData);
+            resetForm();
+            getExpenses();
+            
+            
+        })
+
+        function resetForm(){
+            document.getElementById('expense').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('type').value = '';    
+        }
+
+        async function getExpenses(){
+            const expensesContainer = document.getElementById('expenses');
+            const getExpenseResponse = await axios.get('http://localhost:3000/expenses/getexpenses');
+            expensesContainer.innerHTML = ``;
+            getExpenseResponse.data.forEach(expense => {
+                const expenseData = document.createElement('p');
+                expenseData.innerHTML=`
+                ${expense.expense} - ${expense.description} - ${expense.type}
+                <button onclick = "deleteExpense(${expense.id})">Delete</button>
+                `;
+                expensesContainer.append(expenseData);
+            });
+        }
+
+        async function deleteExpense(id){
+            await axios.delete(`http://localhost:3000/expenses/delete/${id}`);
+            getExpenses();
+        }
+
+        window.onload = getExpenses();
+    </script>
+</body>
+</html>
