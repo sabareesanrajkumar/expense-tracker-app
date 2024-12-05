@@ -26,14 +26,14 @@ exports.logIn = async (req, res, next) => {
 
     if (!searchUser) {
       return res
-        .status(500)
+        .status(404)
         .json({ success: false, message: "User not found. Please Sign Up" });
     }
 
     if (searchUser.passWord !== req.body.passWord) {
       return res
-        .status(500)
-        .json({ success: true, message: "password did not match" });
+        .status(401)
+        .json({ success: true, message: "user not authorized" });
     }
 
     return res.status(200).json({ success: true, message: "login successful" });

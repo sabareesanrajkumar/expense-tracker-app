@@ -27,7 +27,6 @@
             try{
                 const postResponse= await axios.post('http://localhost:3000/user/login',FormData);
                 if (postResponse.status==200){
-                    console.log("login successful")
                     alert("login successful");
                 }
                 resetForm(event);
