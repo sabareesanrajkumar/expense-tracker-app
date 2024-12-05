@@ -1,9 +1,14 @@
 const Users = require("../models/users");
+const bcrypt = require("bcrypt");
 
 exports.createUser = async (req, res, next) => {
   try {
-    const newUser = await Users.create(req.body);
-    return res.status(200).json({ success: true, message: "user created" });
+    const { userName, email, passWord, phoneNumber } = req.body;
+    const saltrounds = 10;
+    bcrypt.hash(passWord, saltrounds, async (err, hash) => {
+      await Users.create({ userName, email, passWord: hash, phoneNumber });
+      return res.status(200).json({ success: true, message: "user created" });
+    });
   } catch (err) {
     if (err.name === "SequelizeUniqueConstraintError") {
       return res
@@ -30,13 +35,20 @@ exports.logIn = async (req, res, next) => {
         .json({ success: false, message: "User not found. Please Sign Up" });
     }
 
-    if (searchUser.passWord !== req.body.passWord) {
-      return res
-        .status(401)
-        .json({ success: true, message: "user not authorized" });
-    }
-
-    return res.status(200).json({ success: true, message: "login successful" });
+    bcrypt.compare(req.body.passWord, searchUser.passWord, (err, result) => {
+      if (err) {
+        throw new Error("something went wrong");
+      }
+      if (result === true) {
+        return res
+          .status(200)
+          .json({ success: true, message: "login successful" });
+      } else {
+        return res
+          .status(401)
+          .json({ success: true, message: "user not authorized" });
+      }
+    });
   } catch (err) {
     console.log(err);
     return res
