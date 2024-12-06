@@ -25,15 +25,22 @@
     
     <p id="error" style="color:red"></p>
     <script>
+        let token;
+        window.addEventListener("DOMContentLoaded", ()=>{
+            token = localStorage.getItem("token");
+            getExpenses();
+        })
+
+
         document.getElementById('expense-form').addEventListener('submit',async (event)=>{
             event.preventDefault();
             const formData = {
                 expense: event.target.expense.value,
                 description: event.target.description.value,
-                type: event.target.type.value
+                type: event.target.type.value,
             }
 
-            await axios.post('http://localhost:3000/expenses/addexpense',formData);
+            await axios.post('http://localhost:3000/expenses/addexpense',formData,{headers:{"Authorization":token}});
             resetForm();
             getExpenses();
             
@@ -48,24 +55,22 @@
 
         async function getExpenses(){
             const expensesContainer = document.getElementById('expenses');
-            const getExpenseResponse = await axios.get('http://localhost:3000/expenses/getexpenses');
+            const getExpenseResponse = await axios.get('http://localhost:3000/expenses/getexpenses',{headers:{"Authorization":token}});
             expensesContainer.innerHTML = ``;
             getExpenseResponse.data.forEach(expense => {
                 const expenseData = document.createElement('p');
                 expenseData.innerHTML=`
                 ${expense.expense} - ${expense.description} - ${expense.type}
-                <button onclick = "deleteExpense(${expense.id})">Delete</button>
+                <button onclick = "deleteExpense(${expense.id},${expense.userId})">Delete</button>
                 `;
                 expensesContainer.append(expenseData);
             });
         }
 
-        async function deleteExpense(id){
-            await axios.delete(`http://localhost:3000/expenses/delete/${id}`);
+        async function deleteExpense(id,userId){
+            await axios.delete(`http://localhost:3000/expenses/delete/${id}/${userId}`);
             getExpenses();
         }
-
-        window.onload = getExpenses();
     </script>
 </body>
 </html>

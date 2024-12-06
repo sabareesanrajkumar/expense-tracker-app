@@ -1,5 +1,6 @@
 const Users = require("../models/users");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 exports.createUser = async (req, res, next) => {
   try {
@@ -21,6 +22,10 @@ exports.createUser = async (req, res, next) => {
   }
 };
 
+function generateAccessToken(id) {
+  return jwt.sign({ userId: id }, "123456789");
+}
+
 exports.logIn = async (req, res, next) => {
   try {
     const searchUser = await Users.findOne({
@@ -40,9 +45,11 @@ exports.logIn = async (req, res, next) => {
         throw new Error("something went wrong");
       }
       if (result === true) {
-        return res
-          .status(200)
-          .json({ success: true, message: "login successful" });
+        return res.status(200).json({
+          success: true,
+          message: "login successful",
+          token: generateAccessToken(searchUser.id),
+        });
       } else {
         return res
           .status(401)

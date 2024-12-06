@@ -28,6 +28,8 @@
             try{
                 const postResponse= await axios.post('http://localhost:3000/user/login',FormData);
                 if (postResponse.status==200){
+                    console.log(postResponse.data.token);
+                    localStorage.setItem("token", postResponse.data.token);
                     window.location.href = 'expenses.html';
                 }
                 resetForm(event);
