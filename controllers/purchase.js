@@ -37,8 +37,10 @@ exports.purchasePremium = async (req, res, next) => {
 exports.updateTransactionStatus = async (req, res, next) => {
   try {
     const { payment_id, order_id, status } = req.body;
+
     const order = await Order.findOne({ where: { orderId: order_id } });
     await order.update({ paymentid: payment_id, status: status });
+
     if (status == "SUCCESSFUL") {
       await req.user.update({ isPremiumUser: true });
       return res
