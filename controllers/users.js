@@ -49,6 +49,7 @@ exports.logIn = async (req, res, next) => {
           success: true,
           message: "login successful",
           token: generateAccessToken(searchUser.id),
+          isPremiumUser: searchUser.isPremiumUser,
         });
       } else {
         return res
