@@ -8,21 +8,22 @@ exports.getLeaderBoard = async (req, res, next) => {
       "userId",
       [Sequelize.fn("SUM", Sequelize.col("expense")), "totalExpense"],
     ],
+    include: [
+      {
+        model: Users,
+        attributes: ["userName"],
+      },
+    ],
     group: ["userId"],
     order: [[Sequelize.literal("totalExpense"), "DESC"]],
   });
 
-  const users = await Users.findAll({
-    attributes: ["id", "userName"],
-  });
-
-  const leaderBoard = leaderboardResponse.map((entry) => {
-    const user = users.find((u) => u.id === entry.userId);
+  const formattedResponse = leaderboardResponse.map((record) => {
     return {
-      userId: entry.userId,
-      userName: user ? user.userName : "Unknown",
-      totalExpense: parseFloat(entry.dataValues.totalExpense),
+      userId: record.userId,
+      userName: record.user?.dataValues.userName,
+      totalExpense: record.dataValues.totalExpense,
     };
   });
-  return res.status(200).json(leaderBoard);
+  return res.status(200).json(formattedResponse);
 };
