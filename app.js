@@ -11,6 +11,7 @@ const passwordRoutes = require("./routes/password");
 const Expense = require("./models/expenses");
 const User = require("./models/users");
 const Order = require("./models/orders");
+const forgotPasswordRequest = require("./models/forgotpasswordRequests");
 
 const app = express();
 
@@ -22,11 +23,18 @@ app.use("/purchase", purchaseRoutes);
 app.use("/premium", premiumRoutes);
 app.use("/password", passwordRoutes);
 
+User.hasMany(Order);
+Order.belongsTo(User);
+
 User.hasMany(Expense, { foreignKey: "userId" });
 Expense.belongsTo(User, { foreignKey: "userId" });
 
-User.hasMany(Order);
-Order.belongsTo(User);
+User.hasMany(forgotPasswordRequest, {
+  foreignKey: "userId",
+});
+forgotPasswordRequest.belongsTo(User, {
+  foreignKey: "userId",
+});
 
 sequelize
   .sync()

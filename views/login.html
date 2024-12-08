@@ -58,6 +58,7 @@
                 const forgotPasswordResponse = await axios.post("http://localhost:3000/password/forgotpassword",{email: event.target.email.value});
                 event.target.email.value = '';
                 document.getElementById("forgot-password-form").style.display="none";
+                alert('reset link sent to your mail');
 
             })
         }
