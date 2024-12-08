@@ -4,14 +4,11 @@ const Sequelize = require("sequelize");
 
 exports.getLeaderBoard = async (req, res, next) => {
   const leaderboardResponse = await Expenses.findAll({
-    attributes: [
-      "userId",
-      [Sequelize.fn("SUM", Sequelize.col("expense")), "totalExpense"],
-    ],
+    attributes: ["userId"],
     include: [
       {
         model: Users,
-        attributes: ["userName"],
+        attributes: ["userName", "totalExpense"],
       },
     ],
     group: ["userId"],
@@ -22,7 +19,7 @@ exports.getLeaderBoard = async (req, res, next) => {
     return {
       userId: record.userId,
       userName: record.user?.dataValues.userName,
-      totalExpense: record.dataValues.totalExpense,
+      totalExpense: record.user?.dataValues.totalExpense,
     };
   });
   return res.status(200).json(formattedResponse);

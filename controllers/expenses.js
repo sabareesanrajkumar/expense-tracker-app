@@ -1,4 +1,6 @@
 const Expenses = require("../models/expenses");
+const Users = require("../models/users");
+const Sequelize = require("sequelize");
 
 exports.addExpense = async (req, res, next) => {
   try {
@@ -6,6 +8,12 @@ exports.addExpense = async (req, res, next) => {
       ...req.body,
       userId: req.user.id,
     });
+    let newTotalExpense = +req.user.totalExpense + +req.body.expense;
+
+    await req.user.update({
+      totalExpense: newTotalExpense,
+    });
+
     return res.status(200).json({ success: true, message: "expense created" });
   } catch (err) {
     return res
@@ -30,6 +38,16 @@ exports.getExpenses = async (req, res, next) => {
 exports.deleteExpense = async (req, res, next) => {
   const expenseId = req.params.id;
   const userId = req.params.userId;
+
+  const oldExpense = await Expenses.findOne({
+    where: { id: expenseId, userId: userId },
+  });
+
+  await Users.update(
+    { totalExpense: Sequelize.literal(`totalExpense - ${oldExpense.expense}`) },
+    { where: { id: userId } }
+  );
   await Expenses.destroy({ where: { id: expenseId, userId: userId } });
+
   res.status(200).json({ success: true, message: "expense deleted" });
 };
