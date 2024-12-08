@@ -95,9 +95,9 @@
                 description: event.target.description.value,
                 type: event.target.type.value,
             }
-
-            await axios.post('http://localhost:3000/expenses/addexpense',formData,{headers:{"Authorization":token}});
             resetForm();
+            await axios.post('http://localhost:3000/expenses/addexpense',formData,{headers:{"Authorization":token}});
+            
             getExpenses();
             
             
