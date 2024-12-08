@@ -13,7 +13,15 @@
         <input type="password" namw="passWord" id="password" placeholder="password" required>
         <button type="submit">Log In</button>
     </form>
-    <p>Not a User? - <a>Sign Up Now</a></p>
+    <div id="forgot-password" >
+        <button id="forgot-password-btn" onclick="forgotPassword()">Forgot password</button>
+        <form id="forgot-password-form" style="display: none;">
+            <p>Rest your password</p>
+            <input type="email" name="email"  placeholder="Enter you Email" required>
+            <button type="submit">Get Reset Link</button>
+        </form>
+    </div>
+    <p>Not a User? - <a href="signup.html">Sign Up Now</a></p>
     <p id="error" style="color:red"></p>
 
 
@@ -42,6 +50,21 @@
             }
 
         })
+        async function forgotPassword(){
+            document.getElementById("forgot-password-form").style.display="block";
+            document.getElementById("forgot-password-btn").style.display="none";
+            document.getElementById("forgot-password-form").addEventListener("submit",async (event)=>{
+                event.preventDefault();
+                const forgotPasswordResponse = await axios.post("http://localhost:3000/password/forgotpassword",{email: event.target.email.value});
+                event.target.email.value = '';
+                document.getElementById("forgot-password-form").style.display="none";
+
+            })
+        }
+
+        
+
+
         function resetForm(event){
             event.target.email.value='';
             event.target.password.value='';

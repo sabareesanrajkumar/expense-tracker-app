@@ -6,6 +6,7 @@ const userRoutes = require("./routes/users");
 const expenseRoutes = require("./routes/expenses");
 const purchaseRoutes = require("./routes/purchase");
 const premiumRoutes = require("./routes/premium");
+const passwordRoutes = require("./routes/password");
 
 const Expense = require("./models/expenses");
 const User = require("./models/users");
@@ -19,6 +20,7 @@ app.use("/user", userRoutes);
 app.use("/expenses", expenseRoutes);
 app.use("/purchase", purchaseRoutes);
 app.use("/premium", premiumRoutes);
+app.use("/password", passwordRoutes);
 
 User.hasMany(Expense, { foreignKey: "userId" });
 Expense.belongsTo(User, { foreignKey: "userId" });
