@@ -12,6 +12,8 @@
     <h3>Daily Expenses</h3>
     <button id="rzp-button1">Buy Premium</button>
 
+    
+    <h3>Expenses</h3>
     <form id="expense-form">
         <input type="number" name="expense" id="expense" placeholder="Enter Expense" required>
         <input type="text" name="dscription" id="description" placeholder="Enter Description">
@@ -24,16 +26,16 @@
           </select>
         <button type="submit">Add Expense</button>
     </form>
-    <h3>Expenses</h3>
     <div id="expenses"></div>
 
+    
+    <h3>Income</h3>
     <form id="income-form">
         <input type="number" name="income" id="income" placeholder="Enter income" required>
         <input type="text" name="dscription" id="description" placeholder="Enter Description">
         <button type="submit">Add Income</button>
     </form>
-    <h3>Income</h3>
-    <div id="income"></div>
+    <div id="income-container"></div>
     
 
     <div id="premium-features" style="display: none;">
@@ -53,9 +55,10 @@
                 <thead>
                     <tr>
                         <th>Date</th>
-                        <th>Expense</th>
                         <th>Description</th>
                         <th>Type</th>
+                        <th>Expense</th>
+                        <th>Income</th>
                     </tr>
                 </thead>
                 <tbody id="records-table">
@@ -66,131 +69,6 @@
     </div>
 
     <p id="error" style="color:red"></p>
-    <script>
-        let buyPremiumBtn=document.getElementById("rzp-button1");
-        let premiumFeatures = document.getElementById("premium-features");
-        let token;
-
-        window.addEventListener("DOMContentLoaded", ()=>{
-            token = localStorage.getItem("token");
-            let isPremiumUser = localStorage.getItem("isPremiumUser");
-            console.log(isPremiumUser);
-            if(isPremiumUser === 'true') {
-                buyPremiumBtn.style.display="none";
-                premiumFeatures.style.display="block";      
-            }
-            getExpenses();
-        })
-
-        document.getElementById("rzp-button1").onclick = async function(e){
-            const token = localStorage.getItem("token");
-            const response = await axios.get('http://localhost:3000/purchase/premiummembership',{headers:{"Authorization":token}});
-            console.log("pay pesponse",response)
-            var options = {
-                "key":response.data.key_id,
-                "order_id":response.data.order.id,
-                "handler":async function (response){
-                    const updateTransaction = await axios.post("http://localhost:3000/purchase/updatetransactionstatus",{
-                        order_id:options.order_id,
-                        payment_id:response.razorpay_payment_id,
-                        status:"SUCCESSFUL"
-                    },{headers:{"Authorization":token}})
-                    
-                    localStorage.setItem("isPremiumUser",true);
-                    
-                    alert("you're a premium user");
-                    window.location.reload();
-                }
-            }
-            const rzp1 = new Razorpay(options);
-            rzp1.open();
-            e.preventDefault();
-
-            rzp1.on("payment.failed",async function (response){
-                await axios.post("http://localhost:3000/purchase/updatetransactionstatus",{
-                  order_id: options.order_id,
-                  payment_id: null,
-                  status: "FAILED",
-                }, { headers: { "Authorization": token } });
-                alert("sonething went wrong");
-                
-            })
-        }
-
-        document.getElementById('expense-form').addEventListener('submit',async (event)=>{
-            event.preventDefault();
-            const formData = {
-                expense: event.target.expense.value,
-                description: event.target.description.value,
-                type: event.target.type.value,
-            }
-            resetForm();
-            await axios.post('http://localhost:3000/expenses/addexpense',formData,{headers:{"Authorization":token}});
-            
-            getExpenses();
-            
-            
-        })
-
-        function resetForm(){
-            document.getElementById('expense').value = '';
-            document.getElementById('description').value = '';
-            document.getElementById('type').value = '';    
-        }
-
-        async function getExpenses(){
-            const expensesContainer = document.getElementById('expenses');
-            const getExpenseResponse = await axios.get('http://localhost:3000/expenses/getexpenses',{headers:{"Authorization":token}});
-            expensesContainer.innerHTML = ``;
-            getExpenseResponse.data.forEach(expense => {
-                const expenseData = document.createElement('p');
-                expenseData.innerHTML=`
-                ${expense.expense} - ${expense.description} - ${expense.type}
-                <button onclick = "deleteExpense(${expense.id},${expense.userId})">Delete</button>
-                `;
-                expensesContainer.append(expenseData);
-            });
-        }
-
-        async function deleteExpense(id,userId){
-            await axios.delete(`http://localhost:3000/expenses/delete/${id}/${userId}`);
-            getExpenses();
-        }
-        
-        async function getLeaderBoard(){
-            const leaderBoardResponse = await axios.get('http://localhost:3000/premium/leaderboard');
-            console.log(leaderBoardResponse);   
-            const leaderboardContainer = document.getElementById("leaderboard");
-            leaderboardContainer.style.display="block";
-            leaderboardContainer.innerHTML='';
-            leaderBoardResponse.data.forEach(lead=>{
-                const leader = document.createElement("p");
-                leader.innerHTML = `Name: ${lead.userName}  -  total expense: ${lead.totalExpense}`;
-                leaderboardContainer.append(leader);
-            })
-            
-        }
-
-
-        async function filterExpenses(period) {
-        let filteredRecords = axios.get(`http://localhost:3000/expenses/filterexpense/${period}`,{headers:{"Authorization":token}});
-        const recordsTable = document.getElementById("records-table");
-        recordsTable.innerHTML = ""; 
-        filteredRecords.forEach(record => {
-            const row = `<tr>
-                <td>${record.updatedAt}</td>
-                <td>${record.expense}</td>
-                <td>${record.description}</td>
-                <td>${record.type}</td>
-            </tr>`;
-            recordsTable.innerHTML += row;
-        });        
-        }
-
-        async function downloadReport(){
-            console.log("donnload report frontend")
-        }
-
-    </script>
+    <script src="../scripts/expenses.js"></script>
 </body>
 </html>

@@ -46,8 +46,8 @@ exports.getExpenses = async (req, res, next) => {
 };
 
 exports.deleteExpense = async (req, res, next) => {
-  const expenseId = req.params.id;
-  const userId = req.params.userId;
+  const expenseId = req.params.expenseId;
+  const userId = req.user.id;
   const t = await Sequelize.transaction();
 
   try {
