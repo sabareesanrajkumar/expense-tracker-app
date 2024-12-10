@@ -33,16 +33,30 @@ exports.addExpense = async (req, res, next) => {
 };
 
 exports.getExpenses = async (req, res, next) => {
-  await Expenses.findAll({ where: { userId: req.user.id } })
-    .then((expense) => {
-      return res.status(200).json(expense);
-    })
-    .catch((err) => {
-      console.log(err);
-      return res
-        .status(500)
-        .json({ success: false, message: "sometihng went wrong" });
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const offset = (page - 1) * limit;
+
+    const { count, rows: expenses } = await Expenses.findAndCountAll({
+      where: { userId: req.user.id },
+      limit,
+      offset,
     });
+
+    const totalPages = Math.ceil(count / limit);
+
+    return res.status(200).json({
+      success: true,
+      expenses,
+      currentPage: page,
+      totalPages,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Something went wrong", error: err });
+  }
 };
 
 exports.deleteExpense = async (req, res, next) => {
