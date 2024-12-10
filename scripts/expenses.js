@@ -11,7 +11,11 @@ window.addEventListener("DOMContentLoaded", () => {
     premiumFeatures.style.display = "block";
   }
   const page = 1;
-  getExpenses(page);
+
+  let rowsPerPage = parseInt(localStorage.getItem("rowsPerPage")) || 5;
+
+  document.getElementById("rowsPerPage").value = rowsPerPage;
+  getExpenses(page, rowsPerPage);
   getIncome();
 });
 
@@ -73,8 +77,8 @@ document
     await axios.post("http://localhost:3000/expenses/addexpense", formData, {
       headers: { Authorization: token },
     });
-
-    getExpenses(page);
+    console.log();
+    getExpenses(page, rowsPerPage);
   });
 
 function resetForm() {
@@ -83,11 +87,11 @@ function resetForm() {
   document.getElementById("type").value = "";
 }
 
-async function getExpenses(page) {
+async function getExpenses(page, limit) {
   try {
     const expensesContainer = document.getElementById("expenses");
     const getExpenseResponse = await axios.get(
-      `http://localhost:3000/expenses/getexpenses?page=${page}`,
+      `http://localhost:3000/expenses/getexpenses?page=${page}&limit=${limit}`,
       { headers: { Authorization: token } }
     );
 
@@ -103,21 +107,29 @@ async function getExpenses(page) {
         <button onclick = "deleteExpense(${expense.id})">Delete</button>
         `;
       expensesContainer.append(expenseData);
-      showPagination();
+      showPagination(currentPage);
     });
   } catch (err) {
     console.error("get expenses error:", err);
   }
 }
 
-function showPagination() {
+function updateRowsPerPage() {
+  const rowsPerPageSelect = document.getElementById("rowsPerPage");
+  rowsPerPage = parseInt(rowsPerPageSelect.value) || 5;
+  localStorage.setItem("rowsPerPage", rowsPerPage);
+  currentPage = 1;
+  getExpenses(currentPage, rowsPerPage);
+}
+
+function showPagination(currentPage) {
   const paginationContainer = document.getElementById("pagination");
   paginationContainer.innerHTML = "";
 
   const prevButton = document.createElement("button");
   prevButton.textContent = "<";
   prevButton.disabled = currentPage === 1;
-  prevButton.onclick = () => getExpenses(currentPage - 1);
+  prevButton.onclick = () => getExpenses(currentPage - 1, rowsPerPage);
   paginationContainer.appendChild(prevButton);
 
   const pageInfo = document.createElement("span");
@@ -127,7 +139,7 @@ function showPagination() {
   const nextButton = document.createElement("button");
   nextButton.textContent = ">";
   nextButton.disabled = currentPage === totalPages;
-  nextButton.onclick = () => getExpenses(currentPage + 1);
+  nextButton.onclick = () => getExpenses(currentPage + 1, rowsPerPage);
   paginationContainer.appendChild(nextButton);
 }
 
@@ -135,7 +147,7 @@ async function deleteExpense(expenseId) {
   await axios.delete(`http://localhost:3000/expenses/delete/${expenseId}`, {
     headers: { Authorization: token },
   });
-  getExpenses(page);
+  getExpenses(page, limit);
 }
 
 async function getLeaderBoard() {

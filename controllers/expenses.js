@@ -35,7 +35,7 @@ exports.addExpense = async (req, res, next) => {
 exports.getExpenses = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = 10;
+    const limit = parseInt(req.query.limit) || 5;
     const offset = (page - 1) * limit;
 
     const { count, rows: expenses } = await Expenses.findAndCountAll({
