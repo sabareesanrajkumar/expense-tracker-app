@@ -4,6 +4,7 @@ const Sequelize = require("../util/database");
 
 exports.addExpense = async (req, res, next) => {
   const t = await Sequelize.transaction();
+
   try {
     await Expenses.create(
       {
@@ -26,6 +27,7 @@ exports.addExpense = async (req, res, next) => {
     return res.status(200).json({ success: true, message: "expense created" });
   } catch (err) {
     await t.rollback();
+
     return res
       .status(500)
       .json({ success: false, message: "failed to store expense in database" });

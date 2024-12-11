@@ -29,6 +29,7 @@ const accessLogStream = fs.createWriteStream(
 app.use(cors());
 app.use(helmet());
 app.use(morgan("combined", { stream: accessLogStream }));
+app.use(express.json());
 
 app.use("/user", userRoutes);
 app.use("/expenses", expenseRoutes);

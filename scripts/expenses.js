@@ -1,6 +1,8 @@
 let buyPremiumBtn = document.getElementById("rzp-button1");
 let premiumFeatures = document.getElementById("premium-features");
 let token;
+let page;
+let rowsPerPage;
 
 window.addEventListener("DOMContentLoaded", () => {
   token = localStorage.getItem("token");
@@ -10,9 +12,9 @@ window.addEventListener("DOMContentLoaded", () => {
     buyPremiumBtn.style.display = "none";
     premiumFeatures.style.display = "block";
   }
-  const page = 1;
+  page = 1;
 
-  let rowsPerPage = parseInt(localStorage.getItem("rowsPerPage")) || 5;
+  rowsPerPage = parseInt(localStorage.getItem("rowsPerPage")) || 5;
 
   document.getElementById("rowsPerPage").value = rowsPerPage;
   getExpenses(page, rowsPerPage);
@@ -77,7 +79,6 @@ document
     await axios.post("http://localhost:3000/expenses/addexpense", formData, {
       headers: { Authorization: token },
     });
-    console.log();
     getExpenses(page, rowsPerPage);
   });
 
@@ -147,7 +148,7 @@ async function deleteExpense(expenseId) {
   await axios.delete(`http://localhost:3000/expenses/delete/${expenseId}`, {
     headers: { Authorization: token },
   });
-  getExpenses(page, limit);
+  getExpenses(page, rowsPerPage);
 }
 
 async function getLeaderBoard() {
