@@ -21,9 +21,15 @@ const Users = sequelize.define("users", {
   phoneNumber: {
     type: Sequelize.STRING,
   },
-  isPremiumUser: Sequelize.BOOLEAN,
-  totalExpense: Sequelize.INTEGER,
-  totalIncome: Sequelize.INTEGER,
+  isPremiumUser: {
+    type: Sequelize.BOOLEAN,
+  },
+  totalExpense: {
+    type: Sequelize.INTEGER,
+  },
+  totalIncome: {
+    type: Sequelize.INTEGER,
+  },
 });
 
 module.exports = Users;

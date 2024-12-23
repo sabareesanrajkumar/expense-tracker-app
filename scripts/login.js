@@ -13,7 +13,6 @@ document
         FormData
       );
       if (postResponse.status == 200) {
-        console.log(postResponse.data.token);
         localStorage.setItem("isPremiumUser", postResponse.data.isPremiumUser);
         localStorage.setItem("token", postResponse.data.token);
         window.location.href = "expenses.html";

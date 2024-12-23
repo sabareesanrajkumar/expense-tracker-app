@@ -1,5 +1,6 @@
 let buyPremiumBtn = document.getElementById("rzp-button1");
 let premiumFeatures = document.getElementById("premium-features");
+let premiumUserText = document.getElementById("premium-user-text");
 let token;
 let page;
 let rowsPerPage;
@@ -7,10 +8,10 @@ let rowsPerPage;
 window.addEventListener("DOMContentLoaded", () => {
   token = localStorage.getItem("token");
   let isPremiumUser = localStorage.getItem("isPremiumUser");
-  console.log("ispremiumuser:", isPremiumUser);
   if (isPremiumUser === "true") {
     buyPremiumBtn.style.display = "none";
     premiumFeatures.style.display = "block";
+    premiumUserText.style.display = "block";
   }
   page = 1;
 
@@ -27,7 +28,6 @@ document.getElementById("rzp-button1").onclick = async function (e) {
     "http://localhost:3000/purchase/premiummembership",
     { headers: { Authorization: token } }
   );
-  console.log("pay pesponse", response);
   var options = {
     key: response.data.key_id,
     order_id: response.data.order.id,
@@ -107,6 +107,7 @@ async function getExpenses(page, limit) {
         ${expense.expense} - ${expense.description} - ${expense.type}
         <button onclick = "deleteExpense(${expense.id})">Delete</button>
         `;
+      expenseData.id = "record-amount";
       expensesContainer.append(expenseData);
       showPagination(currentPage);
     });
@@ -167,6 +168,7 @@ async function getLeaderBoard() {
 }
 
 async function filterExpenses(period) {
+  document.getElementById("table-head").style.display = "flex";
   let filteredRecords = await axios.get(
     `http://localhost:3000/premium/filteredreport/${period}`,
     { headers: { Authorization: token } }
@@ -175,7 +177,7 @@ async function filterExpenses(period) {
   recordsTable.innerHTML = "";
   filteredRecords.data.forEach((record) => {
     const row = `<tr>
-        <td>${record.updatedAt}</td>
+        <td>${record.updatedAt.split("T")[0]}</td>
         <td>${record.description}</td>
         <td>${record.type ? record.type : ""}</td>
         <td>${record.expense ? record.expense : "-"}</td>
@@ -209,7 +211,6 @@ document
   .getElementById("income-form")
   .addEventListener("submit", async (event) => {
     event.preventDefault();
-    console.log("income event listener");
     const formData = {
       income: event.target.income.value,
       description: event.target.description.value,

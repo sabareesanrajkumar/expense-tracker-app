@@ -3,12 +3,12 @@ require("dotenv").config();
 const mysql = require("mysql2");
 const Sequelize = require("sequelize");
 const sequelize = new Sequelize(
-  "expense-tracker",
-  "root",
+  process.env.DB_NAME,
+  process.env.DB_USER_NAME,
   process.env.DB_PASSWORD,
   {
     dialect: "mysql",
-    host: "localhost",
+    host: process.env.DB_HOST_NAME,
     logging: false,
   }
 );

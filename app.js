@@ -27,7 +27,7 @@ const accessLogStream = fs.createWriteStream(
   { flags: "a" }
 );
 app.use(cors());
-app.use(helmet());
+//app.use(helmet());
 app.use(morgan("combined", { stream: accessLogStream }));
 app.use(express.json());
 

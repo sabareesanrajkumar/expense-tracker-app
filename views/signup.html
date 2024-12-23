@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="./css/signup.css" >
 </head>
 <body>
     <div id = "signup">
@@ -17,7 +18,9 @@
             <button type="submit">Sign Up</button>
         </form>
     </div>
-    <p>Existing User? - <a href="login.html">Log In</a></p>
+    <div id="redirect">
+        <p> Existing User? - <a href="login.html">Log In </a></p>
+    </div>
     <p id="error" style="color:red"></p>
     
     <script src="../scripts/signup.js" ></script>

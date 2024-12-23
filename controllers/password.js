@@ -15,7 +15,7 @@ exports.forgotPassword = async (req, res, next) => {
   const tranEmailApi = new Sib.TransactionalEmailsApi();
 
   const sender = {
-    email: "sabareesanrajkumar05@gmail.com",
+    email: process.env.MY_EMAIL_ID,
   };
 
   const receivers = [
@@ -61,8 +61,9 @@ exports.forgotPassword = async (req, res, next) => {
   }
 };
 
+let uuid;
 exports.validateResetLink = async (req, res, next) => {
-  const uuid = req.params.uuid;
+  uuid = req.params.uuid;
 
   try {
     const resetRequest = await ForgotPasswordRequests.findOne({
@@ -76,25 +77,32 @@ exports.validateResetLink = async (req, res, next) => {
       <html>
         <head>
           <title>Reset Password</title>
-          <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        </head>
+
+          </head>
         <body>
           <h1>Reset Password</h1>
           <form id="reset-password-form">
-            <input name="resetUuid" id="reset-uuid" value=${uuid} type="hidden">
+            <input name="resetUuid" id="reset-uuid" value=${uuid}>
             <input type="password" name="newPassword" placeholder="New Password" required />
             <button type="submit">Reset Password</button>
           </form>
 
-          <script>
+          <script nonce="abc123">
             document.getElementById('reset-password-form').addEventListener("submit",async(event)=>{
-            event.preventDefault();
-            formData = {
+              event.preventDefault();
+            const formData = {
                 resetUuid:event.target.resetUuid.value,
                 newPassword:event.target.newPassword.value,
             }
             try {
-                await axios.post("http://localhost:3000/password/updatepassword",formData);
+                
+                await fetch("http://localhost:3000/password/updatepassword", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formData),
+                });
                 alert('your password is changed');
                 window.close();
             }catch(err){
@@ -108,7 +116,6 @@ exports.validateResetLink = async (req, res, next) => {
       </html>
     `);
   } catch (err) {
-    console.error("Error validating reset link>>>>", error);
     res.status(500).json({ message: "couldn't reset password" });
   }
 };

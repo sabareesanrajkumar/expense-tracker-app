@@ -17,7 +17,7 @@ exports.downloadReport = async (req, res, next) => {
   return res.status(200).json({ fileURL, success: true });
 
   async function uploadToS3(data, filename) {
-    const BUCKET_NAME = "expensetrackerclover";
+    const BUCKET_NAME = process.env.AWS_BUCKET_NAME;
     const IAM_USER_KEY = process.env.AWS_IAM_USER_ACCESS_KEY;
     const IAM_USER_SECRET = process.env.AWS_IAM_USER_SECRET_KEY;
 
