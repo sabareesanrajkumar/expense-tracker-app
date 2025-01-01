@@ -35,7 +35,10 @@ exports.addIncome = async (req, res, next) => {
 exports.getIncome = async (req, res, next) => {
   await Income.findAll({ where: { userId: req.user.id } })
     .then((income) => {
-      return res.status(200).json(income);
+      if (income) {
+        return res.status(200).json(income);
+      }
+      return res.status(200).json();
     })
     .catch((err) => {
       console.log(err);

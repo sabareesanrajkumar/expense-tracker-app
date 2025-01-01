@@ -175,16 +175,22 @@ async function filterExpenses(period) {
   );
   const recordsTable = document.getElementById("records-table");
   recordsTable.innerHTML = "";
+  let tableRows = "";
   filteredRecords.data.forEach((record) => {
+    const recordDate = record.updatedAt
+      .split("T")[0]
+      .replace(/\s+/g, "")
+      .trim();
     const row = `<tr>
-        <td>${record.updatedAt.split("T")[0]}</td>
+        <td>${recordDate}</td>
         <td>${record.description}</td>
         <td>${record.type ? record.type : ""}</td>
         <td>${record.expense ? record.expense : "-"}</td>
         <td>${record.income ? record.income : "-"}</td>
     </tr>`;
-    recordsTable.innerHTML += row;
+    tableRows += row;
   });
+  recordsTable.innerHTML += tableRows;
 }
 
 async function downloadReport() {

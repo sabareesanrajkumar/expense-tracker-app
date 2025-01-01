@@ -82,7 +82,7 @@ exports.validateResetLink = async (req, res, next) => {
         <body>
           <h1>Reset Password</h1>
           <form id="reset-password-form">
-            <input name="resetUuid" id="reset-uuid" value=${uuid}>
+            <input name="resetUuid" id="reset-uuid" value=${uuid} type="hidden">
             <input type="password" name="newPassword" placeholder="New Password" required />
             <button type="submit">Reset Password</button>
           </form>

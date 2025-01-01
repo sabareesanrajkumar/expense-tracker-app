@@ -181,6 +181,34 @@ form input:focus, form select:focus, form button:focus {
 }
 
 
+  table {
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 10px; 
+    text-align: left; 
+    table-layout: fixed; 
+  }
+
+  th {
+    justify-content: space-between;
+    padding: 07px 30px;
+    text-align: left; 
+    color: #2550c5;
+    text-overflow: ellipsis; 
+  }
+  td {
+    padding: 7px; 
+    border: 1px solid #ddd; 
+    text-align: left; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap; 
+  }
+
+
+
+
+
 
 @media only screen and (max-width: 768px) {
     body {
